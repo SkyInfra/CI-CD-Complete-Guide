@@ -79,7 +79,7 @@ This repository follows the chapter sequence of **Jenkins Basics to Production**
 
 ## Progress tracker
 
-- [ ] Day 1 — Modern SDLC and Build Automation
+- [x] Day 1 — Modern SDLC and Build Automation
 - [ ] Day 2 — CI/CD Concepts and Branching Strategies
 - [ ] Day 3 — Jenkins Basics and Installation
 - [ ] Day 4 — Jenkins Freestyle Jobs
