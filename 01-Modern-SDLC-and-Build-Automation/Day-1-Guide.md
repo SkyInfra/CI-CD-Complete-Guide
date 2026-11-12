@@ -1,450 +1,509 @@
-# Day 1 — Modern SDLC and Build Automation
+# Day 1 — Modern SDLC & Build Automation
 
-> **Course section:** Day 1 — Modern SDLC Explained  
-> **Video:** [Jenkins Basics to Production — Cloud with Josh / Precode Camp](https://www.youtube.com/watch?v=uHNOqKdqQas)  
-> **Covered timestamps:** 00:07:35–00:58:50
+<p align="center">
+  <strong>From a software idea to a tested, deployable, and maintained product</strong><br/>
+  <em>CI/CD Foundations · Revision Guide · Beginner to Practical</em>
+</p>
 
-## Scope of these notes
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=uHNOqKdqQas&t=455s">Modern SDLC</a> ·
+  <a href="https://www.youtube.com/watch?v=uHNOqKdqQas&t=558s">SDLC Phases</a> ·
+  <a href="https://www.youtube.com/watch?v=uHNOqKdqQas&t=2203s">Compiled vs Interpreted</a> ·
+  <a href="https://www.youtube.com/watch?v=uHNOqKdqQas&t=2977s">Containerized Builds</a> ·
+  <a href="https://www.youtube.com/watch?v=uHNOqKdqQas&t=3412s">Build Automation</a>
+</p>
 
-The course outline shared for this lesson contains topic titles and timestamps, not a word-for-word transcript. This guide follows every Day 1 topic in that outline and expands it into a revision reference. Examples and explanations are learning notes, not exact quotations from the instructor.
+> [!NOTE]
+> This guide follows all Day 1 topics and timestamps in the course outline shared for this repository. The outline contains chapter titles rather than a full transcript, so these are expanded study notes—not a word-for-word reconstruction of the instructor's explanations.
 
-## 1. Modern SDLC Explained
+---
 
-**Timestamp:** [00:07:35](https://www.youtube.com/watch?v=uHNOqKdqQas&t=455s)
+## What you'll understand after Day 1
+
+| Concept | The question you should be able to answer |
+| --- | --- |
+| Modern SDLC | How does software move from an idea to a maintained product? |
+| SDLC phases | What happens at each stage, and what does it produce? |
+| Compiled vs. interpreted | How does the application's language affect its build workflow? |
+| Containerized vs. non-containerized | What exactly gets delivered to the server? |
+| Build automation | Why should build and test steps be repeatable? |
+
+## Contents
+
+- [1. Modern SDLC](#1-modern-sdlc)
+- [2. SDLC phases: the complete lifecycle](#2-sdlc-phases-the-complete-lifecycle)
+- [3. Compiled vs. interpreted languages](#3-compiled-vs-interpreted-languages)
+- [4. Containerized vs. non-containerized workflows](#4-containerized-vs-non-containerized-workflows)
+- [5. CI/CD workflow for compiled applications](#5-cicd-workflow-for-compiled-applications)
+- [6. CI/CD workflow for interpreted applications](#6-cicd-workflow-for-interpreted-applications)
+- [7. Why build automation matters](#7-why-build-automation-matters)
+- [8. How the concepts connect](#8-how-the-concepts-connect)
+- [9. Revision notes and interview answer](#9-revision-notes-and-interview-answer)
+- [10. Self-check questions](#10-self-check-questions)
+
+---
+
+## 1. Modern SDLC
+
+<sub>Course timestamp: [00:07:35 — Modern SDLC Explained](https://www.youtube.com/watch?v=uHNOqKdqQas&t=455s)</sub>
 
 ### What is SDLC?
 
-SDLC stands for **Software Development Life Cycle**. It is the structured process a team follows to plan, build, test, release, operate, and improve software.
+**SDLC (Software Development Life Cycle)** is the structured process a team follows to plan, design, develop, build, test, release, operate, and improve software.
 
-Think of it as the complete journey of a software product: from the first idea to a running application that is continuously maintained and improved.
+Think of an online shopping application. It begins as an idea—customers need to track their orders—and eventually becomes a feature that customers use. SDLC describes the work involved in that entire journey, including the improvements made after release.
 
-### Why do we need an SDLC?
+### Why do teams need it?
 
-Without a defined process, teams may build features users do not need, misunderstand requirements, discover bugs late, make inconsistent releases, struggle with hand-offs, or find it difficult to maintain software.
+Without a defined lifecycle, teams can:
+- Build features that do not solve the user's actual problem.
+- Work with unclear or changing requirements.
+- Discover defects very late.
+- Make inconsistent releases through manual hand-offs.
+- Struggle to understand who owns an issue after deployment.
+- Find maintenance difficult because decisions and processes were not planned.
 
-An SDLC gives the team a repeatable way to coordinate work, manage quality, reduce risk, and deliver value.
+A well-managed SDLC helps teams coordinate, control risk, maintain quality, and deliver useful software.
 
-### Traditional and modern software delivery
+### Traditional delivery vs. modern delivery
 
-A traditional process may separate development, testing, and operations into distinct hand-off stages. This can create long feedback loops: developers finish their work, pass it to another team, and problems may only appear later.
+In a traditional hand-off model, development, testing, and operations may work separately. A team completes its stage and passes the work to the next team. Feedback can arrive late, making problems expensive to fix.
 
-Modern software delivery aims for smaller changes, faster feedback, collaboration, automation, and continuous improvement. Agile practices help teams deliver work incrementally. DevOps encourages development and operations to share responsibility for delivering and running software.
+Modern delivery aims for:
+- Smaller and more frequent changes.
+- Collaboration across development, testing, and operations.
+- Automated checks and repeatable processes.
+- Faster feedback from tests, monitoring, and users.
+- Continuous improvement rather than treating release as the end.
 
-**Important distinction:** Agile is a way of organizing and delivering work in short feedback-driven cycles. DevOps is a culture and set of practices that bring development and operations together. Automation supports both, but neither is simply a tool.
+**Agile and DevOps are related, but not interchangeable:**
 
-### Real-world example
+| Agile | DevOps |
+| --- | --- |
+| Focuses on how teams plan and deliver work incrementally | Focuses on collaboration and shared responsibility across development and operations |
+| Uses short feedback-driven iterations | Connects development, delivery, deployment, and operations |
+| Helps teams adapt to changing requirements | Helps teams deliver and operate software reliably |
 
-Imagine an online shopping application. A product owner identifies a need for order tracking. The team clarifies requirements, designs the feature, implements the API and application changes, tests the workflow, releases it, monitors errors and performance, and uses customer feedback to improve it. The cycle repeats as the product evolves.
+Neither Agile nor DevOps is a single tool. Automation supports the practices; it does not replace the culture or engineering decisions.
 
-## 2. SDLC Phases — End-to-End View
+---
 
-**Timestamp:** [00:09:18](https://www.youtube.com/watch?v=uHNOqKdqQas&t=558s)
+## 2. SDLC phases: the complete lifecycle
 
-Organizations may use different names or combine phases, but these activities are common.
+<sub>Course timestamp: [00:09:18 — SDLC Phases Explained](https://www.youtube.com/watch?v=uHNOqKdqQas&t=558s)</sub>
 
-### 2.1 Planning and requirement analysis
+The names and boundaries can vary between organizations, but a typical lifecycle includes the following stages.
 
-The team identifies the problem, users, goals, scope, constraints, and expected behavior.
+### The lifecycle at a glance
 
-Questions include: What problem are we solving? Who will use the software? What must it do? What are the security, performance, and availability expectations?
+```mermaid
+flowchart TD
+    A["💡 Planning & Requirements"] --> B["📐 Design"]
+    B --> C["💻 Development"]
+    C --> D["⚙️ Build"]
+    D --> E["🧪 Testing & QA"]
+    E --> F["📦 Release & Deployment"]
+    F --> G["🚀 Operations & Monitoring"]
+    G --> H["🔁 Feedback & Maintenance"]
+    H --> A
+    E -. "Defects found" .-> C
+    G -. "Incidents / user feedback" .-> A
+```
 
-**Outputs:** requirements, user stories, acceptance criteria, and a prioritized backlog.
+### What happens in each phase?
 
-### 2.2 Design
+| Phase | What the team does | Typical output |
+| --- | --- | --- |
+| **1. Planning & requirements** | Understand the problem, users, scope, constraints, and acceptance criteria | Requirements, user stories, prioritized backlog |
+| **2. Design** | Plan architecture, components, APIs, data model, UX, security, and infrastructure | Architecture and technical designs |
+| **3. Development** | Write code, use version control, review changes, and collaborate | Source code in Git |
+| **4. Build** | Resolve dependencies, compile or prepare code, package the application | JAR, binary, ZIP, or container image |
+| **5. Testing & QA** | Verify correctness, integration, user workflows, performance, and security | Test results and quality reports |
+| **6. Release & deployment** | Approve a version and make it available in an environment | A deployed application version |
+| **7. Operations & monitoring** | Run the application and observe its health and behavior | Logs, metrics, traces, alerts |
+| **8. Maintenance & feedback** | Fix defects, patch dependencies, improve performance, and add features | New requirements and changes |
 
-The team decides how the system should be structured. Design may cover application architecture, components, database schema, data flow, APIs, user experience, security boundaries, and infrastructure.
+### Environments: where does the application go?
 
-**Outputs:** architecture diagrams, technical designs, API definitions, and database designs.
+```mermaid
+flowchart LR
+    A["Development"] --> B["Testing / QA"]
+    B --> C["Staging"]
+    C --> D["Production"]
+    style D fill:#14532d,color:#fff,stroke:#16a34a
+```
 
-### 2.3 Development / implementation
+- **Development:** developers integrate and check ongoing work.
+- **Testing / QA:** the team verifies behavior and catches defects.
+- **Staging:** a production-like environment for final validation.
+- **Production:** the live environment used by customers.
 
-Developers turn the design into source code. Work is normally managed through version control such as Git. Good practices include small changes, meaningful commits, code reviews, and consistent coding standards.
+Not every organization uses all four environments, and the promotion rules differ. The important idea is that a change should be validated before it reaches real users.
 
-**Output:** source code and configuration committed to a repository.
+### Testing is not one single activity
 
-### 2.4 Build
+| Test type | What it checks |
+| --- | --- |
+| Unit | A small function or component in isolation |
+| Integration | Whether connected components work together |
+| System / end-to-end | Whether a complete workflow behaves correctly |
+| Acceptance | Whether the software meets agreed requirements |
+| Performance | Response time, throughput, and behavior under load |
+| Security | Vulnerabilities and insecure behavior |
 
-The source code and dependencies are processed into something that can be tested or run. Depending on the technology, this may compile source code, resolve dependencies, run build tasks, package files, or create a container image.
+**Remember:** SDLC is broader than coding. It includes planning before development and operating and maintaining the product after deployment.
 
-**Output:** a build artifact, package, executable, or container image.
+---
 
-### 2.5 Testing and quality assurance
+## 3. Compiled vs. interpreted languages
 
-The team checks whether the software behaves as expected.
+<sub>Course timestamp: [00:36:43 — Compiled vs Interpreted Languages](https://www.youtube.com/watch?v=uHNOqKdqQas&t=2203s)</sub>
 
-- **Unit tests:** check small pieces of code in isolation.
-- **Integration tests:** check that components work together.
-- **System / end-to-end tests:** check complete user workflows.
-- **Acceptance tests:** check whether requirements are satisfied.
-- **Performance tests:** examine response time and behavior under load.
-- **Security tests:** look for vulnerabilities and insecure behavior.
+This distinction affects what happens during a CI build. Different languages produce and run application code in different ways.
 
-Testing can be automated, manual, or a combination. Finding defects earlier usually makes them cheaper to fix.
+### Compiled-language example: Java
 
-### 2.6 Release and deployment
+A compiler translates source code into another form before execution. Depending on the language and platform, the result may be native machine code, bytecode, or another intermediate representation.
 
-A **release** is a version approved to be made available. **Deployment** is the act of installing or making that version run in an environment.
+```mermaid
+flowchart LR
+    A["Java source<br/>.java"] -->|javac| B["Bytecode<br/>.class"]
+    B -->|JVM| C["Running application"]
+```
 
-Common environments:
-
-- **Development:** active development and early testing.
-- **Testing / QA:** verification by the test team.
-- **Staging:** a production-like environment for final checks.
-- **Production:** the environment used by real customers.
-
-The exact environment names and promotion process vary by organization.
-
-### 2.7 Operations and monitoring
-
-After deployment, the application must be operated and observed. Teams monitor availability, error rates, latency, CPU, memory, storage, network usage, logs, traces, and business metrics.
-
-Monitoring helps teams discover failures and understand application behavior in real use.
-
-### 2.8 Maintenance and feedback
-
-The team fixes defects, patches dependencies, improves performance, responds to feedback, and adds features. Those changes start another cycle.
-
-### SDLC flow to remember
-
-    Plan
-      ↓
-    Requirements
-      ↓
-    Design
-      ↓
-    Develop
-      ↓
-    Build
-      ↓
-    Test
-      ↓
-    Release / Deploy
-      ↓
-    Operate & Monitor
-      ↓
-    Feedback and Maintenance
-      └───────────────→ back to Plan
-
-**Key idea:** SDLC is not just coding. It covers the complete life of software, including what happens before development and after deployment.
-
-## 3. Compiled vs. Interpreted Languages — CI/CD Perspective
-
-**Timestamp:** [00:36:43](https://www.youtube.com/watch?v=uHNOqKdqQas&t=2203s)
-
-This distinction matters because applications do not all produce runnable outputs in the same way.
-
-### Compiled languages
-
-A compiler translates source code into another form before the program runs. Depending on the language and platform, the output may be native machine code, bytecode, or another intermediate representation.
-
-Examples:
 - C and C++ commonly compile to native binaries.
-- Java compiles source code into JVM bytecode, which runs on a Java Virtual Machine (JVM).
+- Java compiles source code into JVM bytecode, which is executed by a Java Virtual Machine.
 
-Simplified Java flow:
+**Important:** Compiled does not always mean one native executable. Java normally produces bytecode and needs a compatible JVM.
 
-    Java source (.java)
-           ↓ javac
-    Bytecode (.class)
-           ↓ JVM
-    Running application
+### Interpreted-language example: Python
 
-A compiled-language CI workflow may check out source code, select the compiler/runtime, resolve dependencies, compile the source, run tests, package the output, publish the artifact or build an image, and deploy the approved version.
+An interpreted-language workflow commonly runs source code using an interpreter or runtime rather than producing a standalone native executable ahead of time.
 
-**Important:** “Compiled” does not mean every application produces one native executable. Java normally produces bytecode and requires a compatible JVM.
+```mermaid
+flowchart LR
+    A["Python source<br/>.py"] --> B["Python interpreter"]
+    B --> C["Running application"]
+```
 
-### Interpreted languages
+Python is commonly taught as an interpreted language. JavaScript is commonly run by a runtime such as Node.js.
 
-In an interpreted-language workflow, source code is commonly executed by an interpreter or runtime rather than being compiled ahead of time into a standalone native executable.
-
-Examples commonly placed in this category:
-- Python, executed by the Python runtime.
-- JavaScript, executed by a runtime such as Node.js.
-
-Simplified Python flow:
-
-    Python source (.py)
-           ↓
-    Python interpreter
-           ↓
-    Running application
-
-A typical CI workflow checks out source code, sets up the required runtime/version, installs dependencies, runs linting and tests, prepares a package or deployment bundle, and may build a container image.
-
-**Important nuance:** This distinction is a useful introduction, not an absolute description of every runtime. Some interpreted-language runtimes use bytecode or just-in-time compilation internally.
+**A useful nuance:** This is an introductory distinction, not an absolute description of every runtime. Some runtimes use bytecode and just-in-time compilation internally.
 
 ### Comparison
 
 | Area | Compiled-language example | Interpreted-language example |
 | --- | --- | --- |
 | Examples | Java, C, C++ | Python, JavaScript |
-| Typical build activity | Compile source and package output | Set up runtime, resolve dependencies, validate and package source |
-| Common output | Binary, bytecode, package, or image | Source bundle, package, or image |
-| Runtime | May need a runtime such as JVM | Needs an appropriate interpreter/runtime |
-| CI checks | Compilation, tests, packaging | Dependency installation, linting, tests, packaging |
+| Typical CI work | Compile source, test, package | Set up runtime, install dependencies, test, package |
+| Possible output | Binary, bytecode, package, image | Source bundle, package, image |
+| Runtime | May need a runtime such as JVM | Needs the appropriate interpreter/runtime |
 
-Both types of applications can be tested, packaged, containerized, and deployed through CI/CD.
+Both types still need automated testing, packaging, versioning, and deployment. The pipeline steps differ; the need for a pipeline does not.
 
-## 4. Build Workflows: Containerized vs. Non-Containerized Applications
+---
 
-**Timestamp:** [00:49:37](https://www.youtube.com/watch?v=uHNOqKdqQas&t=2977s)
+## 4. Containerized vs. non-containerized workflows
 
-### What is a build artifact?
+<sub>Course timestamp: [00:49:37 — Build Workflows](https://www.youtube.com/watch?v=uHNOqKdqQas&t=2977s)</sub>
 
-A **build artifact** is an output produced by a build process that can be stored, tested, distributed, or deployed. Examples include a JAR file, executable, ZIP package, or container image.
+First, understand the term **build artifact**: an output created by the build process that can be stored, tested, distributed, or deployed. Examples include a JAR, executable, ZIP package, or container image.
 
-### Non-containerized workflow
+### Non-containerized delivery
 
-The application is packaged or copied to the target environment. That environment must provide the required runtime, libraries, configuration, and operating-system dependencies.
+The application package is delivered to a server. The server must already have—or be configured with—the correct runtime, libraries, and other dependencies.
 
-    Git repository
-          ↓
-    CI build and tests
-          ↓
-    Application artifact (for example, app.jar)
-          ↓
-    Artifact repository / release storage
-          ↓
-    Server with compatible runtime
-          ↓
-    Run application
+```mermaid
+flowchart TD
+    A["Git repository"] --> B["CI: build + tests"]
+    B --> C["Application artifact<br/>e.g. app.jar"]
+    C --> D["Artifact repository"]
+    D --> E["Server with prepared runtime"]
+    E --> F["Run application"]
+```
 
-**Advantages**
-- Fewer container-specific components to learn and operate.
-- Straightforward for an application deployed to a known server environment.
-- The application artifact can be smaller than a full container image.
+**Benefits**
+- No container platform is required for a simple deployment.
+- Can be straightforward when the target server environment is well managed.
+- The application package may be smaller than a full image.
 
-**Challenges**
-- The target server must have compatible runtime versions and dependencies.
-- Environment differences can cause “works on my machine” problems.
-- Runtime installation and configuration must be managed separately.
+**Trade-offs**
+- The target server's runtime and dependencies must be managed separately.
+- Differences between environments can cause “works on my machine” problems.
+- Server configuration becomes an important part of deployment consistency.
 
-### Containerized workflow
+### Containerized delivery
 
-A container image packages the application together with its user-space runtime and required dependencies. The image is built from a Dockerfile and can run as a container on a compatible container engine.
+A container image packages the application and its required user-space dependencies. It is built using a Dockerfile and distributed through a container registry.
 
-    Git repository
-          ↓
-    CI checks and tests
-          ↓
-    Docker build
-          ↓
-    Container image
-          ↓
-    Image registry
-          ↓
-    Target host / container platform
-          ↓
-    Run container
+```mermaid
+flowchart TD
+    A["Git repository"] --> B["CI: checks + tests"]
+    B --> C["Docker build"]
+    C --> D["Container image"]
+    D --> E["Container registry"]
+    E --> F["Host / container platform"]
+    F --> G["Run container"]
+```
 
-**Advantages**
+**Benefits**
 - The same image can be promoted through testing, staging, and production.
-- Runtime dependencies are packaged with the application.
-- Images work naturally with container platforms and repeatable deployments.
+- Application runtime dependencies can be packaged with the app.
+- Images fit naturally into container platforms and repeatable deployments.
 
-**Challenges**
-- Teams must manage image size, security, registries, networking, storage, and runtime configuration.
-- Secrets and environment-specific configuration should not be baked into the image.
-- Containers rely on the host kernel and a compatible container runtime; they are not full virtual machines.
+**Trade-offs**
+- Teams must manage image size, vulnerabilities, registries, networking, storage, and runtime configuration.
+- Secrets and environment-specific configuration should not be baked into an image.
+- Containers share the host kernel; they are not full virtual machines.
 
-### Side-by-side comparison
+### Side-by-side view
 
 | Concern | Non-containerized | Containerized |
 | --- | --- | --- |
-| Deployment unit | Application package / artifact | Container image |
-| Runtime | Prepared on target server | Included in image where appropriate |
-| Environment consistency | Depends more on server configuration | Image helps keep user-space dependencies consistent |
+| Deployment unit | Application artifact | Container image |
+| Runtime | Prepared on target server | Packaged in image where appropriate |
+| Consistency | Depends heavily on server configuration | Image standardizes user-space dependencies |
 | Distribution | Artifact repository / package storage | Container registry |
-| Operations | Manage host runtime and app process | Manage host/container platform and container lifecycle |
+| Operations | Manage host runtime and app process | Manage host, container runtime, and containers |
 
-**Key point:** Containers do not remove the need for build and test. They change how the application and its runtime dependencies are packaged and delivered.
+> **Core takeaway:** Containers do not remove the build and test process. They change how the application and its dependencies are packaged and delivered.
 
-## 5. Compiled Languages: CI/CD Build Workflow
+---
 
-**Timestamp:** [00:50:18](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3018s)
+## 5. CI/CD workflow for compiled applications
 
-A compiled-language pipeline usually needs a build environment containing the correct compiler, build tool, and dependencies.
+<sub>Course timestamp: [00:50:18 — Compiled Languages: CI/CD Build Workflow](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3018s)</sub>
 
-### Example: Java application
+A compiled project needs a build environment with the correct compiler, build tool, and dependencies.
 
-A common Maven-based flow:
+### Example: Java + Maven
 
-    Developer pushes code
-            ↓
-    CI checks out repository
-            ↓
-    Set up JDK and Maven
-            ↓
-    Resolve dependencies
-            ↓
-    Compile source
-            ↓
-    Run tests
-            ↓
-    Package JAR
-            ↓
-    Store artifact or build container image
-            ↓
-    Deploy approved version
+```mermaid
+flowchart TD
+    A["Developer pushes code"] --> B["CI checks out Git repository"]
+    B --> C["Set up JDK + Maven"]
+    C --> D["Resolve dependencies"]
+    D --> E["Compile source"]
+    E --> F["Run tests"]
+    F --> G["Package JAR"]
+    G --> H["Store artifact / build image"]
+    H --> I["Deploy approved version"]
+```
 
-Commands commonly used in a Maven build include:
+Common Maven commands:
 
-    mvn compile
-    mvn test
-    mvn package
+```bash
+mvn compile
+mvn test
+mvn package
+```
 
-A combined command often used in CI:
+A common combined CI command:
 
-    mvn clean verify
+```bash
+mvn clean verify
+```
 
-- **clean** removes output from a previous build.
-- **verify** runs the lifecycle through verification, including earlier phases such as compilation and tests when configured.
+- `clean` removes output from a previous build.
+- `verify` runs the Maven lifecycle through the verification phase, including earlier phases such as compilation and tests when configured.
 
-The exact Maven lifecycle and plugin behavior will be studied in the Maven section later in this course.
+A successful compile alone does not prove that the application is correct. Tests and other quality checks are still needed. Maven's lifecycle and plugins are covered in a later course section.
 
-### Why compile in CI?
+---
 
-Compilation catches errors before a change is promoted. Automated tests provide additional confidence that the application behaves correctly. Packaging creates a versioned artifact that can be stored and deployed.
+## 6. CI/CD workflow for interpreted applications
 
-A successful compile alone does not prove that an application is correct; tests and other quality checks are still important.
+<sub>Course timestamp: [00:53:29 — Interpreted Languages: CI/CD Build Workflow](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3209s)</sub>
 
-## 6. Interpreted Languages: CI/CD Build Workflow
+An interpreted-language project still needs a repeatable CI process, even if there is no traditional compile-to-native-binary step.
 
-**Timestamp:** [00:53:29](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3209s)
+### Example: Python
 
-Interpreted-language projects still need a repeatable CI process even when there is no traditional compile-to-native-binary step.
+```mermaid
+flowchart TD
+    A["Developer pushes code"] --> B["CI checks out repository"]
+    B --> C["Set up Python version"]
+    C --> D["Create isolated environment"]
+    D --> E["Install dependencies"]
+    E --> F["Lint + test"]
+    F --> G["Package source / build image"]
+    G --> H["Publish / deploy approved version"]
+```
 
-### Example: Python application
+Illustrative commands for a simple Python project:
 
-A common workflow:
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m pytest
+```
 
-    Developer pushes code
-            ↓
-    CI checks out repository
-            ↓
-    Set up Python version
-            ↓
-    Create isolated environment
-            ↓
-    Install dependencies
-            ↓
-    Run linting and tests
-            ↓
-    Prepare deployment package or image
-            ↓
-    Publish / deploy approved version
+A real project may use Poetry, uv, Pipenv, another test runner, or a containerized build environment.
 
-Example commands for a simple Python project:
+**The important difference:** CI often focuses on selecting the right runtime, installing pinned dependencies, checking code quality, and running tests. The application can then be shipped as source plus dependencies or as a container image.
 
-    python -m venv .venv
-    source .venv/bin/activate
-    python -m pip install -r requirements.txt
-    python -m pytest
+No traditional compile step does **not** mean no build process. Dependency resolution, validation, packaging, and artifact creation are still part of reliable delivery.
 
-These commands are illustrative. A real project may use Poetry, uv, Pipenv, a different test runner, or a containerized build environment.
+---
 
-### What is the important difference?
+## 7. Why build automation matters
 
-For many interpreted applications, CI focuses on setting up the correct runtime, installing pinned dependencies, checking code quality, and running tests. The application may then be shipped as source plus dependencies, or packaged into a container image.
+<sub>Course timestamp: [00:56:52 — Why Build Automation Tools Matter](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3412s)</sub>
 
-Do not confuse “no traditional compilation step” with “no build process.” Dependency resolution, validation, packaging, and artifact creation are still part of reliable delivery.
+**Build automation** means using tools and repeatable instructions to perform build tasks consistently instead of asking developers to execute every step manually.
 
-## 7. Why Build Automation Tools Matter
+### Manual process vs. automated process
 
-**Timestamp:** [00:56:52](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3412s)
+```mermaid
+flowchart TB
+    subgraph Manual["Manual delivery"]
+      M1["Developer pulls code"] --> M2["Runs build commands"]
+      M2 --> M3["Runs tests"]
+      M3 --> M4["Packages application"]
+      M4 --> M5["Uploads / deploys manually"]
+    end
+    subgraph Automated["Automated delivery"]
+      A1["Developer pushes code"] --> A2["CI detects change"]
+      A2 --> A3["Pipeline builds + tests"]
+      A3 --> A4["Artifact is published"]
+      A4 --> A5["Deploy or wait for approval"]
+    end
+```
 
-### What is build automation?
+### Why teams automate
 
-Build automation means using tools and repeatable instructions to perform software build tasks consistently instead of relying on developers to execute every step manually.
-
-Depending on the project, automated tasks can include checking out source code, selecting tool versions, resolving dependencies, compiling or preparing code, running tests and quality checks, packaging artifacts or building images, and publishing outputs.
-
-### Why automate?
-
-1. **Consistency:** the same defined steps run each time, reducing differences between developer machines and CI environments.
-2. **Speed:** automation reduces repeated manual work and can run checks as soon as a change is pushed.
-3. **Early feedback:** developers learn that a change broke compilation or tests before it reaches production.
-4. **Repeatability:** a pipeline records the steps used to produce an artifact, making the process easier to reproduce and investigate.
-5. **Fewer manual mistakes:** automation reduces the risk of skipped steps, incorrect order, or inconsistent options.
-6. **Team collaboration:** a shared pipeline gives developers, testers, and operations teams a common delivery process.
-7. **Traceability:** build logs, test reports, artifact versions, and commit identifiers help answer what was built, from which code, and whether checks passed.
-
-### Examples of build automation tools
-
-| Tool | Typical role |
+| Benefit | What it means in practice |
 | --- | --- |
-| Maven | Build automation and dependency management, especially in Java projects |
-| Gradle | Build automation and dependency management |
-| npm scripts | Run project-defined JavaScript tasks |
-| Make | Automate command-based build tasks |
-| Jenkins | Orchestrate CI/CD workflows and invoke build, test, and deployment tools |
+| **Consistency** | The same defined steps run each time |
+| **Speed** | Repeated manual work is reduced |
+| **Early feedback** | Developers find build and test failures sooner |
+| **Repeatability** | The process can be run again and investigated |
+| **Fewer manual errors** | Steps are less likely to be skipped or run in the wrong order |
+| **Collaboration** | Teams share a common delivery process |
+| **Traceability** | Logs, reports, versions, and commit IDs show what happened |
 
-**Important distinction:** Maven, Gradle, npm, and Make commonly define or execute project build tasks. Jenkins is an automation server that can orchestrate those tools as part of a wider pipeline. Jenkins does not replace every language-specific build tool.
+### Know the role of each tool
 
-### Manual vs. automated example
+| Tool | Typical responsibility |
+| --- | --- |
+| **Maven** | Java build lifecycle and dependency management |
+| **Gradle** | Build automation and dependency management |
+| **npm scripts** | Run project-defined JavaScript tasks |
+| **Make** | Automate command-based build tasks |
+| **Jenkins** | Orchestrate build, test, and delivery workflows by invoking other tools |
 
-Manual approach:
-1. A developer pulls the latest code.
-2. Runs build commands.
-3. Runs tests.
-4. Packages the application.
-5. Uploads the package.
-6. Follows deployment steps.
+**Do not mix these roles up:** Maven and Gradle perform project build tasks. Jenkins is an automation server that can coordinate those tools as part of a wider pipeline. Jenkins does not replace every language-specific build tool.
 
-Automated approach:
-1. A developer pushes code to Git.
-2. A CI system detects the change.
-3. A pipeline runs the defined build and test steps.
-4. If checks pass, the artifact is stored or promoted according to the release process.
-5. The team receives the pipeline result.
+Automation also does not mean every code change must go straight to production. Teams can add approval gates, release policies, and environment checks.
 
-Automation does not mean every change should automatically go to production. Approval gates and deployment policies can still be part of the workflow.
+---
 
-## 8. Day 1 — Complete Revision Summary
+## 8. How the concepts connect
 
-**Timestamp:** [00:58:50](https://www.youtube.com/watch?v=uHNOqKdqQas&t=3530s)
+This is the big picture of Day 1: SDLC describes the whole product lifecycle; build workflows explain how code becomes a deliverable; automation makes those steps repeatable.
 
-Remember these connections:
+```mermaid
+flowchart LR
+    A["SDLC<br/>Plan → Build → Operate"] --> B["Source code<br/>in Git"]
+    B --> C["Build workflow"]
+    C --> D{"Application type?"}
+    D --> E["Compiled<br/>Compile + test"]
+    D --> F["Interpreted<br/>Runtime + dependencies + test"]
+    E --> G["Artifact"]
+    F --> G
+    G --> H{"Delivery format?"}
+    H --> I["Package to prepared server"]
+    H --> J["Container image to registry"]
+    I --> K["Deploy + monitor"]
+    J --> K
+    K --> L["Feedback → next change"]
+```
 
-1. **SDLC** describes the full software journey: planning through maintenance.
+### Where does Jenkins fit?
+
+Jenkins can automate and coordinate the steps shown above: checking out code, invoking Maven or another build tool, running tests, building a Docker image, publishing an artifact, and triggering deployment. The later course days will explore how Jenkins jobs and pipelines implement this.
+
+---
+
+## 9. Revision notes and interview answer
+
+### Seven points to remember
+
+1. **SDLC** covers the complete software journey—from planning through maintenance.
 2. **Modern delivery** emphasizes collaboration, smaller changes, automation, and fast feedback.
-3. **Compiled and interpreted projects** have different build details, but both need repeatable validation and delivery.
-4. **Non-containerized deployment** delivers an application artifact to an environment whose runtime must be prepared.
-5. **Containerized deployment** delivers an image that packages the application and its user-space dependencies.
-6. **Build automation** makes build and test steps consistent, repeatable, traceable, and faster.
-7. **Jenkins** can orchestrate these steps; the project still uses language-specific tools to perform the actual build.
+3. **Compiled and interpreted applications** have different build details, but both need repeatable validation and delivery.
+4. **A build artifact** is the output that can be stored, distributed, or deployed.
+5. **Non-containerized delivery** sends an application package to a server whose runtime must be prepared.
+6. **Containerized delivery** sends an image containing the application and its user-space dependencies.
+7. **Build tools and Jenkins have different roles:** build tools perform project tasks; Jenkins orchestrates the wider workflow.
 
-## 9. A Short Explanation You Can Say in an Interview or Revision
+### A concise answer you can say aloud
 
-> “The Software Development Life Cycle is the complete process of building and maintaining software. It starts with planning and requirements, then design, development, build, testing, release, deployment, operations, monitoring, and maintenance. Modern software teams use Agile and DevOps practices to shorten feedback loops and improve collaboration between development and operations.
+> “The Software Development Life Cycle is the complete process of building and maintaining software. It starts with planning and requirements, then design, development, build, testing, release, deployment, operations, monitoring, and maintenance. Modern teams use Agile and DevOps practices to improve collaboration and shorten feedback loops.
 >
-> In CI/CD, the build process depends on the application technology. A compiled project, such as Java, may compile source code into bytecode and package it as a JAR. An interpreted project, such as Python, usually sets up the required runtime, installs dependencies, and runs checks before packaging or deployment.
+> In CI/CD, the build process depends on the application's technology. A compiled project such as Java may compile source into bytecode and package it as a JAR. An interpreted project such as Python usually sets up the runtime, installs dependencies, and runs checks before packaging or deployment.
 >
-> Applications can be delivered as normal artifacts to a prepared server or as container images. Containers help make the application environment more consistent across stages. Build automation tools make tasks such as dependency installation, compilation, testing, and packaging repeatable. Jenkins can orchestrate these tools in an automated pipeline.”
+> An application can be delivered as a normal artifact to a prepared server or as a container image. Containers help make the application environment more consistent across stages. Build automation makes tasks such as dependency installation, compilation, testing, and packaging repeatable. Jenkins can orchestrate these tools in a pipeline.”
 
-Use this as a revision framework, not something to memorize word for word. Be ready to explain the examples in your own words.
+Use this as a framework, not a script to memorize. Practice explaining each diagram in your own words.
 
-## 10. Quick Self-Check
+---
 
-Try answering these without looking at the notes:
+## 10. Self-check questions
 
-1. What does SDLC stand for, and why is it broader than coding?
-2. What happens in the design, build, testing, deployment, and operations phases?
-3. How do Agile and DevOps differ?
-4. What is the typical Java source-to-runtime flow?
-5. Why does a Python project still need CI even if it has no traditional compile step?
-6. What is a build artifact? Give three examples.
-7. What changes when an application is delivered as a container image?
-8. Why should configuration and secrets be handled separately from a container image?
-9. What problems can build automation reduce?
-10. How is Jenkins different from Maven?
+Try answering these without looking at the guide.
 
-## 11. Day 1 Topic Checklist
+<details>
+<summary><strong>1. What is SDLC, and why is it broader than coding?</strong></summary>
 
-- [x] Course introduction reviewed
+SDLC is the complete lifecycle of software: planning, design, development, build, testing, release, operations, and maintenance. Coding is only one phase.
+</details>
+
+<details>
+<summary><strong>2. What is the difference between Agile and DevOps?</strong></summary>
+
+Agile organizes work into incremental, feedback-driven delivery. DevOps emphasizes collaboration and shared responsibility between development and operations.
+</details>
+
+<details>
+<summary><strong>3. What is a build artifact?</strong></summary>
+
+A produced output that can be stored, distributed, tested, or deployed—for example, a JAR, executable, ZIP package, or container image.
+</details>
+
+<details>
+<summary><strong>4. Why does a Python project still need CI?</strong></summary>
+
+It still needs a known runtime, dependency installation, linting, tests, packaging, and repeatable delivery even if it has no traditional compile-to-native-binary step.
+</details>
+
+<details>
+<summary><strong>5. What changes when an application is containerized?</strong></summary>
+
+The deployment unit becomes a container image that packages the app and user-space dependencies. The image can be stored in a registry and run on a compatible container platform.
+</details>
+
+<details>
+<summary><strong>6. Why should secrets not be baked into an image?</strong></summary>
+
+Images may be shared across environments and stored in registries. Secrets should be supplied securely at runtime so they are not exposed in image layers or metadata.
+</details>
+
+<details>
+<summary><strong>7. How is Jenkins different from Maven?</strong></summary>
+
+Maven manages a project's build lifecycle and dependencies. Jenkins orchestrates broader automation workflows and can invoke Maven as one pipeline step.
+</details>
+
+---
+
+## Day 1 completion checklist
+
+- [x] Course introduction
 - [x] Modern SDLC explained
-- [x] SDLC phases and end-to-end view
-- [x] Compiled vs. interpreted languages from a CI/CD perspective
+- [x] SDLC phases — end-to-end view
+- [x] Compiled vs. interpreted languages
 - [x] Containerized vs. non-containerized build workflows
 - [x] Compiled-language CI/CD workflow
 - [x] Interpreted-language CI/CD workflow
@@ -453,6 +512,8 @@ Try answering these without looking at the notes:
 
 ---
 
-**Next section:** [Day 2 — CI/CD Concepts & Branching Strategies](../02-CI-CD-and-Branching-Strategies/)
-
-**Course outline:** [All course chapters and timestamps](../Course-Outline.md)
+<p align="center">
+  <strong>Day 1 complete · Next: Day 2 — CI/CD Concepts & Branching Strategies</strong><br/>
+  <a href="../02-CI-CD-and-Branching-Strategies/">Continue to Day 2</a> ·
+  <a href="../Course-Outline.md">Full course outline</a>
+</p>
