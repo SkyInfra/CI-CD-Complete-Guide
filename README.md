@@ -1,135 +1,97 @@
 # CI/CD Complete Guide
 
-A practical, beginner-friendly guide to **Continuous Integration (CI), Continuous Delivery/Deployment (CD), Jenkins, and automated software delivery**.
+A hands-on learning repository documenting my journey from **modern software delivery fundamentals to production-oriented Jenkins and DevSecOps pipelines**.
 
-This repository is my learning journal and hands-on reference as I work through CI/CD concepts and build practical Jenkins pipelines. The goal is not just to collect commands, but to understand how each part works, why teams use it, and how it fits into a real software delivery workflow.
+I'll use this repository to build clear notes, understand the reasoning behind each tool, and record practical labs as I work through the course. The goal is to understand how the pieces fit together—not simply collect commands.
 
 > **Status:** Learning in progress  
-> **Primary focus:** CI/CD with Jenkins  
-> **Environment:** macOS (MacBook Air), with Linux and cloud-based labs where needed
+> **Main focus:** Jenkins, CI/CD, Docker, Maven, SonarQube, and DevSecOps  
+> **Working environment:** macOS (MacBook Air) and Ubuntu/AWS environments when required
 
----
+## Course roadmap
 
-## What you'll find here
+The learning path follows the course chapters in [Course Outline](./Course-Outline.md), with timestamps linked directly to the video.
 
-The repository is organized by topic so that concepts, setup instructions, integrations, and practical exercises are easy to find.
-
-| Section | What it covers |
+| Section | Main topics |
 | --- | --- |
-| [01 – CI/CD Fundamentals](./01-CI-CD-Fundamentals/) | CI, Continuous Delivery vs. Continuous Deployment, pipelines, and the software delivery lifecycle |
-| [02 – Jenkins Fundamentals](./02-Jenkins-Fundamentals/) | Jenkins overview, architecture, installation, dashboard, and initial configuration |
-| [03 – Jenkins Pipelines](./03-Jenkins-Pipelines/) | Jobs, pipeline concepts, Declarative and Scripted Pipelines, Jenkinsfiles, stages, and steps |
-| [04 – Jenkins Integrations](./04-Jenkins-Integrations/) | GitHub integration, webhooks, credentials, Docker, and related tools |
-| [05 – Practical Labs](./05-Practical-Labs/) | Hands-on exercises: first job, automated builds, CI pipeline, and deployment workflow |
-| [06 – Advanced Concepts](./06-Advanced-Concepts/) | Agents, distributed builds, pipeline optimization, and Jenkins security |
-| [Resources](./Resources/) | Useful commands, troubleshooting notes, references, and interview preparation |
+| Day 1 — Modern SDLC & Build Automation | SDLC, Agile/DevOps, compiled vs. interpreted languages, build workflows |
+| Day 2 — CI/CD & Branching | CI, CT, Continuous Delivery/Deployment, Git, GitFlow, trunk-based development, image promotion |
+| Day 3 — Jenkins Basics | Jenkins architecture, installation options, Docker-based setup |
+| Day 4 — Freestyle Jobs | JENKINS_HOME, controller vs. agents, practical jobs |
+| Day 5 — Dockerized Flask CI/CD | Docker-outside-of-Docker, build, push, and deploy workflow |
+| Day 6 — Jenkins Pipelines | Pipeline fundamentals and production-style Jenkinsfile |
+| Day 7 — Multibranch Pipelines | Branch discovery and trunk-based CI/CD |
+| Maven | Build tools, pom.xml, lifecycle, plugins, Jenkins integration |
+| SonarQube & DevSecOps | Code quality, SAST, DAST, SCA, SBOM, security pipeline |
+| DevSecOps Mega Project | Jenkins controller/agent, Trivy, SonarQube, ECR, image build and deployment |
+| Jenkins Shared Libraries | Reusable pipeline code, library structure, private Git repositories |
 
-*Sections and files will be added as I progress through the learning plan.*
+## How I document each topic
 
----
+Each set of notes will aim to include:
 
-## Learning approach
+1. **Concept:** what it is, explained in beginner-friendly language.
+2. **Why it matters:** the real engineering problem it solves.
+3. **How it works:** components, flow, and architecture.
+4. **Practical example:** a realistic scenario.
+5. **Commands and configuration:** with explanations and expected results.
+6. **Troubleshooting:** errors, causes, and fixes encountered during practice.
+7. **Evidence:** screenshots or terminal output for completed labs.
 
-Each topic will be documented in my own words and, where useful, will include:
+I'll write the notes in my own words and distinguish explanations from actual lab results. A topic will only be marked complete after I have studied it; a lab will only be marked complete after I have run and verified it.
 
-1. **The idea** – a clear explanation of the concept.
-2. **Why it matters** – the problem it solves in a development team.
-3. **How it works** – the workflow and important components.
-4. **A practical example** – a realistic scenario to connect theory with practice.
-5. **Commands and configuration** – explained in context, not just pasted.
-6. **Common mistakes** – issues I encounter and how to troubleshoot them.
-7. **Evidence** – screenshots or output from completed labs when relevant.
-
-The notes are intended to be useful both while learning and when revisiting a topic later.
-
----
-
-## Planned learning path
-
-```text
-CI/CD Fundamentals
-       |
-       v
-Jenkins Fundamentals
-       |
-       v
-Jenkins Jobs and Pipelines
-       |
-       v
-GitHub, Webhooks, Credentials and Docker
-       |
-       v
-Build, Test and Deployment Labs
-       |
-       v
-Agents, Security and Optimization
-```
-
-This is a working roadmap, not a claim that every topic or lab is already complete. The structure may evolve as the learning plan develops.
-
----
-
-## Tools and technologies
-
-The main focus is Jenkins and the practices around it. The tools used in individual labs may include:
-
-- **Jenkins** – automation server for building delivery pipelines
-- **Git and GitHub** – source control and repository hosting
-- **Docker** – containerizing applications and build environments
-- **Linux and shell scripting** – commands and automation used in CI/CD
-- **AWS** – cloud infrastructure for deployment-related practice, where appropriate
-
-A tool will be added to the practical workflow when the topic requires it.
-
----
-
-## Repository structure
+## Planned repository structure
 
 ```text
 CI-CD-Complete-Guide/
-├── 01-CI-CD-Fundamentals/
-├── 02-Jenkins-Fundamentals/
-├── 03-Jenkins-Pipelines/
-├── 04-Jenkins-Integrations/
-├── 05-Practical-Labs/
-├── 06-Advanced-Concepts/
+├── 01-Modern-SDLC-and-Build-Automation/
+├── 02-CI-CD-and-Branching-Strategies/
+├── 03-Jenkins-Basics-and-Installation/
+├── 04-Jenkins-Freestyle-Jobs/
+├── 05-Dockerized-Flask-CI-CD-Project/
+├── 06-Jenkins-Pipelines/
+├── 07-Multibranch-Pipelines/
+├── 08-Maven-for-DevOps/
+├── 09-SonarQube-and-DevSecOps/
+├── 10-DevSecOps-Mega-Project/
+├── 11-Jenkins-Shared-Libraries/
 ├── Resources/
+├── Course-Outline.md
 └── README.md
 ```
 
----
+Folders and notes will be added as the learning work progresses.
+
+## Tools covered
+
+- **Jenkins** — automation server and pipeline orchestration
+- **Git & GitHub** — version control, collaboration, and source triggers
+- **Docker** — reproducible build and runtime environments
+- **Maven & Java** — application build lifecycle and dependency management
+- **SonarQube** — code quality and static analysis
+- **Trivy** — filesystem and container image vulnerability scanning
+- **Amazon ECR / AWS** — container image storage and cloud deployment labs
+- **Linux & shell scripting** — the environment and commands behind automation
 
 ## Learning source
 
-This learning journey is based in part on a Jenkins and CI/CD tutorial by **Josh (Cloud with Josh / Precode Camp)**, alongside my own practice, notes, and additional research.
+This repository follows the chapter sequence of **Jenkins Basics to Production** by **Josh (Cloud with Josh / Precode Camp)**. It is a personal learning companion: explanations, examples, configurations, and lab evidence will be documented in my own words rather than copied as a transcript.
 
-The documentation here is written in my own words. It is intended as a companion learning resource, not a transcript or reproduction of the tutorial.
+## Progress tracker
 
----
-
-## Progress
-
-- [ ] Review CI/CD fundamentals
-- [ ] Set up Jenkins locally
-- [ ] Explore Jenkins dashboard and configuration
-- [ ] Create the first Jenkins job
-- [ ] Build a pipeline using a Jenkinsfile
-- [ ] Connect a GitHub repository and configure a webhook
-- [ ] Integrate Docker into a pipeline
-- [ ] Complete an automated build and deployment lab
-- [ ] Study Jenkins agents, security, and optimization
-
-Progress will be updated as each topic and lab is completed.
-
----
+- [ ] Day 1 — Modern SDLC and Build Automation
+- [ ] Day 2 — CI/CD Concepts and Branching Strategies
+- [ ] Day 3 — Jenkins Basics and Installation
+- [ ] Day 4 — Jenkins Freestyle Jobs
+- [ ] Day 5 — Dockerized Flask CI/CD Project
+- [ ] Day 6 — Jenkins Pipelines
+- [ ] Day 7 — Multibranch Pipelines
+- [ ] Maven for DevOps
+- [ ] SonarQube and DevSecOps
+- [ ] DevSecOps Mega Project
+- [ ] Jenkins Shared Libraries
 
 ## Author
 
-**SkyInfra**  
-Software Engineering student | Cloud & DevOps learner
-
+**SkyInfra** — Software Engineering student | Cloud & DevOps learner  
 GitHub: [@SkyInfra](https://github.com/SkyInfra)
-
----
-
-If you are also learning CI/CD or Jenkins, feel free to explore the notes, try the labs, and share suggestions or improvements.
