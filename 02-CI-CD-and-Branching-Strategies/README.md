@@ -245,7 +245,7 @@ Git stores the source code and its history. The pipeline checks and delivers the
 
 ---
 
-## 3. The continuous practices in DevOps
+## 4. The continuous practices in DevOps
 
 CI/CD is often used as a general term for automated software integration and delivery. The lesson also introduces Continuous Testing and Continuous Monitoring.
 
@@ -349,7 +349,7 @@ flowchart LR
 
 ---
 
-## 4. What is a CI/CD pipeline?
+## 5. What is a CI/CD pipeline?
 
 A **pipeline** is an automated, repeatable sequence of steps used to build, test, package, publish, and sometimes deploy software.
 
@@ -372,7 +372,7 @@ For example, a push or PR can trigger Jenkins through a webhook. Jenkins then ru
 
 ---
 
-## 5. Branching strategies: GitFlow vs trunk-based development
+## 6. Branching strategies: GitFlow vs trunk-based development
 
 A **branching strategy** is a team's agreed way of using Git branches to integrate changes and release software.
 
@@ -484,7 +484,7 @@ Other workflows mentioned in the lesson:
 
 ---
 
-## 6. Artifact promotion: build once, promote the same digest
+## 7. Artifact promotion: build once, promote the same digest
 
 This is one of the most important ideas in the lesson.
 
@@ -566,7 +566,7 @@ A later pipeline can read the manifest and deploy that digest without rebuilding
 
 ---
 
-## 7. GitFlow promotion in detail
+## 8. GitFlow promotion in detail
 
 ### 7.1 Feature branch → dev: deploy after merge
 
@@ -884,7 +884,7 @@ If everything is healthy and required approvals are present, merge the promotion
 
 ---
 
-## 8. Trunk-based promotions in detail
+## 9. Trunk-based promotions in detail
 
 In trunk-based development, code is merged into `main`, and the same artifact is promoted through the environments.
 
@@ -923,7 +923,7 @@ The main branch can be protected with PR-only rules, required build/test/lint/se
 
 ---
 
-## 9. Where Jenkins fits
+## 10. Where Jenkins fits
 
 ### 9.1 What is Jenkins?
 
@@ -989,7 +989,7 @@ Alternatives and complements mentioned in the lesson include GitHub Actions, Git
 
 ---
 
-## 10. End-to-end example: loan repayment feature
+## 11. End-to-end example: loan repayment feature
 
 Let's connect the entire lesson to one realistic example.
 
@@ -1026,7 +1026,7 @@ flowchart TD
 
 ---
 
-## 11. Quick revision sheet
+## 12. Quick revision sheet
 
 | Question | Short answer |
 | --- | --- |
@@ -1047,7 +1047,7 @@ flowchart TD
 | What is Jenkins? | An automation server that runs pipelines |
 | What is a Jenkinsfile? | Pipeline definition stored as code in the repository |
 
-## 12. Practical learning checklist
+## 13. Practical learning checklist
 
 These are suggested exercises to reinforce the lesson. They are **not marked as completed**; record your actual results after trying them.
 
@@ -1094,7 +1094,7 @@ git push -u origin feature/loan-repayment
 
 These commands are for learning Git. They do not install Jenkins or deploy an application.
 
-## 13. What to document after your own practice
+## 14. What to document after your own practice
 
 When you perform the exercises, add your own evidence:
 
@@ -1106,7 +1106,7 @@ When you perform the exercises, add your own evidence:
 
 Do not claim a lab succeeded unless you ran it and verified the result.
 
-## 14. References
+## 15. References
 
 1. [Jenkins Pipeline documentation](https://www.jenkins.io/doc/book/pipeline/) — pipeline-as-code and Jenkinsfile.
 2. [Pro Git book](https://git-scm.com/book/en/v2) — Git fundamentals and branching.
