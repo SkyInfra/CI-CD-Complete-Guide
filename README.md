@@ -15,7 +15,7 @@ The learning path follows the course chapters in [Course Outline](./Course-Outli
 | Section | Main topics |
 | --- | --- |
 | Day 1 — Modern SDLC & Build Automation | SDLC, Agile/DevOps, compiled vs. interpreted languages, build workflows |
-| Day 2 — CI/CD & Branching | CI, CT, Continuous Delivery/Deployment, Git, GitFlow, trunk-based development, image promotion |
+| [Day 2 — CI/CD & Branching](./02-CI-CD-and-Branching-Strategies/README.md) | CI, CT, Continuous Delivery/Deployment, Git, GitFlow, trunk-based development, image promotion |
 | Day 3 — Jenkins Basics | Jenkins architecture, installation options, Docker-based setup |
 | Day 4 — Freestyle Jobs | JENKINS_HOME, controller vs. agents, practical jobs |
 | Day 5 — Dockerized Flask CI/CD | Docker-outside-of-Docker, build, push, and deploy workflow |
