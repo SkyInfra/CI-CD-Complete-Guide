@@ -33,7 +33,109 @@ That is the problem Git and CI/CD help solve:
 - **Jenkins** can automate and coordinate these steps.
 - **Monitoring** helps the team understand how the live application behaves.
 
-## 2. Git and branching: the foundation
+## 2. The three environments: Development, Staging, and Production
+
+These three names describe **where an application is running and what the team is using that environment to verify**. They are not three different applications. Ideally, the team promotes the same built application artifact through them, while supplying environment-specific configuration.
+
+### A real-life company scenario
+
+Imagine Acme Bank is building an online banking application with a new loan-repayment feature.
+
+A developer changes the repayment code. The company does not expose unfinished code directly to customers. Instead, it moves the release through three environments:
+
+```mermaid
+flowchart LR
+    A["Development (Dev)<br/>Build and developer testing"] --> B["Staging (Stage)<br/>Release rehearsal and final validation"]
+    B --> C["Production (Prod)<br/>Real customers use the service"]
+```
+
+### Development (Dev) — the workshop
+
+**Development is where developers build features and integrate changes while the application is still being actively changed.**
+
+Think of it as the workshop or kitchen where a team prepares a new product before presenting it to anyone.
+
+At Acme Bank:
+- Developers implement the loan-repayment feature and merge changes into the team's development line.
+- The team checks that the application starts, connects to development services, and that basic developer tests pass.
+- The environment may change frequently as new code is integrated.
+- It can contain test accounts and non-production data.
+
+**Main question:** Does the feature work well enough for the team to continue validating it?
+
+Dev is not the place to test with real customer transactions. It is also not a guarantee that the feature is ready for release.
+
+### Staging (Stage) — the dress rehearsal
+
+**Staging is a pre-production environment used to validate a release candidate in conditions that are as close to Production as practical.**
+
+Think of a theatre's dress rehearsal: the actors perform the whole show using the real stage setup before opening night. The team wants to discover problems before customers see the release.
+
+At Acme Bank:
+- The release engineer deploys the candidate loan-service image to Stage.
+- The team verifies the production-like configuration, database connectivity, integrations, permissions, and deployment settings.
+- QA runs smoke, integration, and selected end-to-end tests.
+- The team checks health, logs, and important user journeys.
+- The release is approved for Production only when required checks and reviews pass.
+
+Stage should resemble Production in important ways (such as runtime, deployment method, and configuration shape), but it should use safe non-production data and isolated resources. It may not be an exact copy.
+
+**Main question:** Is this exact release candidate safe and ready to go live?
+
+### Production (Prod) — the real service
+
+**Production is the live environment used by actual customers or business users.**
+
+Think of the restaurant after opening: real customers are now ordering and expect the service to work.
+
+At Acme Bank:
+- Customers sign in and make real loan repayments.
+- The system handles real traffic and business data.
+- The team uses controlled rollout strategies, monitoring, alerting, backups, and rollback plans.
+- Changes are released with stricter access controls and approvals because mistakes can affect customers and money.
+
+**Main question:** Is the live service working reliably for real users?
+
+Production must be protected carefully. Testing in Production, when used, requires deliberate safeguards and must never put real customer data or transactions at risk.
+
+### Quick comparison
+
+| Environment | Who mainly uses it? | Typical purpose | Data | Change frequency |
+|---|---|---|---|---|
+| **Development (Dev)** | Developers | Build, integrate, and debug features | Test/development data | Frequent |
+| **Staging (Stage)** | QA, developers, release engineers | Rehearse and validate a release candidate | Safe, non-production data | Per release candidate |
+| **Production (Prod)** | Real customers and business users | Run the actual service | Real business/customer data | Controlled releases |
+
+### How one release travels through all three
+
+Suppose the team builds loan-service image `v1.4.3`.
+
+1. **Dev:** Developers integrate the feature and verify the application using development services.
+2. **Build once:** The pipeline creates the container image, pushes it to a registry, and records its immutable digest.
+3. **Stage:** The team deploys that same digest using Stage-specific configuration and runs release-validation tests.
+4. **Production:** After required checks and approvals, the team promotes the same digest using Production-specific configuration and a guarded rollout.
+5. **Monitor:** The team watches metrics, logs, traces, and customer-facing health indicators.
+
+```mermaid
+flowchart TD
+    A["Develop and integrate code"] --> B["Build image once"]
+    B --> C["Record immutable digest"]
+    C --> D["Deploy to Dev"]
+    D --> E["Developer checks"]
+    E --> F["Deploy same digest to Stage"]
+    F --> G["Smoke + integration + release checks"]
+    G --> H{"Approved for release?"}
+    H -->|"No"| I["Fix source, build a new digest, validate again"]
+    I --> B
+    H -->|"Yes"| J["Deploy same digest to Production"]
+    J --> K["Monitor real service"]
+```
+
+**Important:** Dev, Stage, and Production are environments, not necessarily Git branches. A team might use `dev`, `stage`, and `prod` branches in a GitFlow-style process, but another team might keep application code on `main` and promote the artifact through pipeline stages. The environment is where the application runs; the branch is how source-code changes are organized.
+
+---
+
+## 3. Git and branching: the foundation
 
 ### 2.1 What is Git?
 
