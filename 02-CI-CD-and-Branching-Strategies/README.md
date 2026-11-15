@@ -549,6 +549,202 @@ The PR also needs the required review and must be up to date with its target bra
 
 **If Stage fails:** keep the PR unmerged, roll Stage back if needed, fix the issue in Dev, build a new artifact/digest, and promote the new candidate.
 
+### 7.2.1 Visual walkthrough: a promotion PR from dev → stage
+
+This is the detailed version of the flow shown in the lesson's diagram. Imagine **Acme Bank** is preparing release `v1.4.3` of its loan-repayment service. The feature has already been merged into `dev`, and the team wants to promote that exact release candidate into the shared Stage Kubernetes environment.
+
+> **Important:** The values below (`ghcr.io/acme/banking-loans`, `v1.4.3`, commit `9f3c2e7`, and digest `sha256:abc123...`) are illustrative teaching values, not a real Acme Bank deployment.
+
+#### The flow at a glance
+
+```mermaid
+flowchart TD
+    A["dev branch contains approved code"] --> B["Build once and push image"]
+    B --> C["Record immutable digest + manifest"]
+    C --> D["Open promotion PR: dev → stage"]
+    D --> E["Stage PR triggers preflight checks"]
+    E --> F["Deploy exact digest to Stage"]
+    F --> G["Run health, smoke and integration tests"]
+    G --> H{"All required checks green?"}
+    H -->|Yes| I["Required reviewer approves"]
+    I --> J["Merge promotion PR into stage"]
+    H -->|No| K["Keep PR blocked"]
+    K --> L["Rollback Stage if needed"]
+    L --> M["Fix in dev, build a NEW digest"]
+    M --> C
+```
+
+#### Step 1 — Build once in the dev release flow
+
+When the approved code is ready, the build pipeline creates a container image and pushes it to the registry.
+
+Example image tag:
+
+```text
+ghcr.io/acme/banking-loans:9f3c2e7-v1.4.3
+```
+
+The registry returns an immutable digest, for example:
+
+```text
+sha256:abc123...
+```
+
+A tag is a convenient label; the digest identifies the exact image content. The promotion pipeline must use the digest, not rebuild the source and not rely on a tag that could later be moved.
+
+#### Step 2 — Publish a promotion manifest
+
+The build pipeline writes metadata to `manifest.json`. The manifest is the hand-off note between the build stage and later deployment stages.
+
+```json
+{
+  "image": "ghcr.io/acme/banking-loans",
+  "digest": "sha256:abc123...",
+  "version": "v1.4.3",
+  "commit_sha": "9f3c2e7",
+  "tags": ["v1.4.3", "9f3c2e7-v1.4.3"],
+  "built_at": "2025-09-15T10:22:00Z"
+}
+```
+
+Think of it like a shipping label attached to a sealed package. It records **what was built**, **which source commit produced it**, and **the exact package identity**. The Stage pipeline reads this file; it does not compile or rebuild the application.
+
+#### Step 3 — Open a promotion PR
+
+A release engineer opens a PR from `dev` to `stage`. This PR is a controlled request to promote release `v1.4.3`.
+
+For this deploy-before-merge pattern, opening or updating the PR triggers the Stage promotion pipeline. The PR stays open while the candidate is tested in Stage. The `stage` branch is not updated just because the PR was opened.
+
+#### Step 4 — Preflight checks (before deployment)
+
+Before touching the Stage cluster, Jenkins performs checks such as:
+
+| Check | What it protects against | Acme Bank example |
+| --- | --- | --- |
+| Manifest reachable | Missing or unavailable release metadata | Jenkins can download `manifest.json` |
+| Digest pullable | Registry access or image publication problem | Kubernetes nodes can pull `@sha256:abc123...` |
+| Configuration renders | Invalid environment-specific deployment settings | Helm can render the Stage values file |
+| Dry-run validation | Invalid Kubernetes resources | The rendered Deployment passes server-side validation |
+
+A simplified configuration check might look like:
+
+```bash
+helm template loans ./charts/loans \\
+  --set image.repository="ghcr.io/acme/banking-loans" \\
+  --set image.digest="sha256:abc123..." \\
+  -f charts/loans/values-stage.yaml
+```
+
+A preflight failure stops the pipeline before the rollout. For example, if the manifest is missing or the digest cannot be pulled, Jenkins should not continue to deployment.
+
+#### Step 5 — Deploy to Stage without rebuilding
+
+The deployment job reads the image and digest from the manifest and applies Stage-specific configuration.
+
+```bash
+IMAGE=$(jq -r '.image' manifest.json)
+DIGEST=$(jq -r '.digest' manifest.json)
+
+helm upgrade --install loans ./charts/loans \\
+  --set image.repository="$IMAGE" \\
+  --set image.digest="$DIGEST" \\
+  -f charts/loans/values-stage.yaml
+```
+
+The resulting container image reference should resolve to:
+
+```text
+ghcr.io/acme/banking-loans@sha256:abc123...
+```
+
+Notice the separation:
+
+- **Application artifact:** the exact same image digest built earlier.
+- **Environment configuration:** Stage values such as replica count, hostname, resource limits, and connection settings.
+
+The application image is not rebuilt for Stage. Only the environment configuration changes.
+
+#### Step 6 — Post-deployment checks
+
+Now Acme Bank checks whether the deployed service actually works in the Stage environment.
+
+| Check | What the team verifies | Example |
+| --- | --- | --- |
+| Readiness / health | The service is running and ready | Kubernetes readiness probe succeeds |
+| Version endpoint | The expected release is running | `/version` reports `v1.4.3` and commit `9f3c2e7` |
+| Smoke test | A critical path works at a basic level | Loan service health endpoint returns success |
+| Small integration test | Important services communicate correctly | Create a test loan and retrieve it |
+
+A green Kubernetes rollout alone is not enough: pods can be running while the application has a broken database connection or a failing business operation. That is why the pipeline also checks application-level behavior.
+
+#### Step 7 — PR status decides whether merging is allowed
+
+The lesson's Stage branch protection example requires the PR to satisfy all required checks, stay up to date with its base branch, and receive the required review.
+
+Example required statuses:
+
+- `preflight-manifest`
+- `preflight-config`
+- `deploy-to-stage`
+- `stage-smoke`
+- `stage-integration`
+
+```mermaid
+flowchart TD
+    A["Promotion PR is open"] --> B["Jenkins reports required statuses"]
+    B --> C{"All statuses green?"}
+    C -->|No| D["Merge blocked"]
+    D --> E["Fix the problem and rerun"]
+    E --> B
+    C -->|Yes| F{"Required review approved?"}
+    F -->|No| G["Wait for reviewer"]
+    G --> F
+    F -->|Yes| H["Merge into stage is enabled"]
+```
+
+This is the key safety gate: **a successful deployment and passing Stage tests make the promotion eligible for merge; they do not silently bypass code review or branch protection.**
+
+#### Step 8 — What if Stage fails?
+
+Suppose the new loan-repayment service deploys, but the integration test finds that repayment records are not saved correctly.
+
+1. The Stage integration status turns red.
+2. The PR remains unmerged because a required status check failed.
+3. The team investigates. If the Stage environment is now unhealthy, it rolls back to the last known-good release.
+4. Developers fix the defect in the source branch / `dev`.
+5. The build pipeline creates and publishes a **new** image.
+6. The new digest is written to a new or updated promotion manifest.
+7. The team re-runs the promotion process for that new digest.
+
+```mermaid
+flowchart LR
+    A["Stage test fails"] --> B["PR remains blocked"]
+    B --> C["Rollback Stage if required"]
+    C --> D["Fix source in dev"]
+    D --> E["Build and publish new image"]
+    E --> F["Record new digest"]
+    F --> G["Re-promote to Stage"]
+```
+
+Do not patch the running Stage container manually and do not rebuild a different image only for Stage. Fix the source, produce a new versioned artifact, and promote that artifact through the normal gates.
+
+#### What the screenshot's labels mean
+
+| Diagram label | Plain-language meaning |
+| --- | --- |
+| **Promotion PR: dev → stage** | A reviewed request to move a release candidate from Dev to Stage |
+| **Preflight** | Checks performed before changing the Stage environment |
+| **Deploy (no rebuild)** | Install the already-built image by its recorded digest |
+| **Post-deploy** | Verify the live Stage deployment and important user paths |
+| **PR Status** | Jenkins reports whether each required pipeline check passed |
+| **Green → Merge enabled** | Required checks and review are satisfied, so GitHub permits the merge |
+| **Red → Merge blocked** | At least one required condition failed; the PR cannot be merged |
+| **Fix in dev → new digest → re-promote** | Correct the source, create a new artifact, and repeat the controlled promotion |
+
+**Remember this sequence:** build once → record digest → open promotion PR → preflight → deploy the same digest → test Stage → merge only when required checks and review pass.
+
+---
+
 ### 7.3 stage → prod: the production gate
 
 Production follows the same artifact-promotion principle but uses stricter safety rules.
